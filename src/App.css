@@ -1,18 +1,45 @@
 #main-container {
-    max-width: 680px;
+    max-width: 900px;
     margin-top: 10px;
 }
 
+#model-output {
+    font-size: 1.5em;
+}
+
 .preview-container {
+    overflow-y: hidden;
+    overflow-x: scroll;
+}
+
+.preview-container .row {
+    width: 0;
+    overflow: visible;
+}
+
+.preview-container .col {
     display: flex;
 }
 
 .image-preview {
-    width: 48px;
-    margin: 0 5px 5px 0;
+    width: 60px;
+    height: 60px;
+    margin: 0 5px 3px 0;
     cursor: pointer;
     border-width: 2px;
     border-color: rgba(0, 0, 0, 0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    flex-shrink: 0
+}
+
+.image-preview img {
+    object-fit: cover;
+    flex-shrink: 0;
+    min-width: 100%;
+    min-height: 100%
 }
 
 .image-preview:hover {
@@ -27,4 +54,24 @@
 
 #file-input {
     display: none;
+}
+
+.styled-scrollbars {
+    --scrollbar-foreground: rgba(238, 238, 238, 0.4);
+    --scrollbar-background: rgba(0, 0, 0, 0);
+    /* Foreground, Background */
+    scrollbar-color: var(--scrollbar-foreground) var(--scrollbar-background);
+}
+
+.styled-scrollbars::-webkit-scrollbar {
+    height: 3px; /* Mostly for horizontal scrollbars */
+}
+
+.styled-scrollbars::-webkit-scrollbar-thumb { /* Foreground */
+    background: var(--scrollbar-foreground);
+}
+
+.styled-scrollbars::-webkit-scrollbar-track { /* Background */
+    background: var(--scrollbar-background);
+    height: 3px;
 }
