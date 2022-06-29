@@ -7,6 +7,11 @@
     font-size: 1.5em;
 }
 
+#main-input {
+    border: 1px solid rgba(0, 0, 0, .25);
+    color: rgba(255, 255, 255, 0.8);
+}
+
 .preview-container {
     overflow-y: hidden;
     overflow-x: scroll;
@@ -74,4 +79,8 @@
 .styled-scrollbars::-webkit-scrollbar-track { /* Background */
     background: var(--scrollbar-background);
     height: 3px;
+}
+
+em.sample-text {
+    color: rgba(255, 255, 255, 0.6)
 }

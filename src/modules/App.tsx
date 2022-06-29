@@ -1,12 +1,15 @@
 import React from 'react';
 import plus from './plus.svg'
 import './App.css';
-import {Button, Card, Col, Container, Form, OverlayTrigger, Row, Tooltip} from "react-bootstrap";
+import {Button, Card, Col, Container, Form, OverlayTrigger, Placeholder, Row, Tooltip} from "react-bootstrap";
 
-const baseURL = "http://192.168.2.32:8000"
+const baseURL = "https://inference-api.explainable-ofa.ml"
 
 const sampleImages = [
-    "https://robohash.org/sfgsdfg?size=1000x1000"
+    {
+        url: "https://robohash.org/sfgsdfg?size=500x500",
+        question: "What color is the robot?"
+    }
 ]
 
 const addYourOwnTooltip = (props: any) => (
@@ -20,19 +23,37 @@ class App extends React.Component {
         imageOptions: [...sampleImages],
         isRequestInFlight: false,
         selectedImage: 0,
-        textTask: "What does the image describe?",
+        currentAnswer: {"answer": null}
+    }
+
+    componentDidMount = () => {
+        this.select(0)
     }
 
     select = (imageID: number) => {
         this.setState({
-            selectedImage: imageID
+            selectedImage: imageID,
+        })
+    }
+
+    updateText = (event: any) => {
+        this.setState((state: any, props) => {
+            let options = state.imageOptions
+            options[state.selectedImage].question = event.target.value
+
+            return {
+                imageOptions: options
+            }
         })
     }
 
     addImageOptions = (event: any) => {
         const files: File[] = Array.from(event.target.files)
         const urls = files.map(
-            (f: File) => URL.createObjectURL(f)
+            (f: File) => ({
+                url: URL.createObjectURL(f),
+                question: ""
+            })
         )
 
         this.setState(
@@ -43,18 +64,35 @@ class App extends React.Component {
     }
 
     performRequest = () => {
-        fetch(this.state.imageOptions[this.state.selectedImage])
+        this.setState({
+            isRequestInFlight: true
+        })
+
+        fetch(this.state.imageOptions[this.state.selectedImage].url)
             .then(res => res.blob()) // Gets the response and returns it as a blob
             .then(blob => {
                 const data = new FormData()
                 data.append('file', blob)
-                data.append('question', this.state.textTask)
+                data.append('question', this.state.imageOptions[this.state.selectedImage].question)
 
-                fetch(baseURL + '/process_image', {
+                return fetch(baseURL + '/process_image', {
                     method: 'POST',
                     body: data
                 })
-            });
+            })
+            .then(res => res.json())
+            .then(json => {
+                this.processAnswer(json)
+                this.setState({
+                    isRequestInFlight: false,
+                })
+            })
+    }
+
+    processAnswer = (answer: any) => {
+        this.setState({
+            currentAnswer: answer,
+        })
     }
 
     render() {
@@ -86,7 +124,7 @@ class App extends React.Component {
 
                                                         return <Card className={classes.join(" ")} bg={"dark"}
                                                                      onClick={() => this.select(index)} key={index}>
-                                                            <Card.Img src={value} style={{color: "white"}}/>
+                                                            <Card.Img src={value.url} style={{color: "white"}}/>
                                                         </Card>
                                                     }
                                                 )
@@ -109,16 +147,18 @@ class App extends React.Component {
                                     </Row>
                                 </Container>
                                 <Card id="image-preview" bg={"dark"} text={"white"}>
-                                    <Card.Img variant="top" src={this.state.imageOptions[this.state.selectedImage]}/>
+                                    <Card.Img variant="top"
+                                              src={this.state.imageOptions[this.state.selectedImage].url}/>
                                 </Card>
                             </Form.Group>
                             <Form.Group className="mb-3">
                                 <Form.Label>
                                     Type your task
                                 </Form.Label>
-                                <Form.Control as="textarea" placeholder={"Dream big and be disappointed"}
-                                              value={this.state.textTask}
-                                              onChange={(event) => this.setState({textTask: event.target.value})}/>
+                                <Form.Control className={"bg-dark"} id={"main-input"} as="textarea"
+                                              placeholder={"Dream big and be disappointed"}
+                                              value={this.state.imageOptions[this.state.selectedImage].question}
+                                              onChange={this.updateText}/>
                             </Form.Group>
                             <Button variant="primary" disabled={this.state.isRequestInFlight}
                                     onClick={this.performRequest}>
@@ -128,13 +168,20 @@ class App extends React.Component {
                     </Col>
                     <Col sm>
                         <h4>Result</h4>
-                        <Form.Label>
-                            The model's text output
-                        </Form.Label>
-                        <Card bg={"dark"} text={"white"}>
-                            <Card.Body id={"model-output"}>
-                                Please perform a request
-                            </Card.Body>
+                        <Card bg={"dark"} text={"white"} id={"model-output"}>
+                            {
+                                this.state.isRequestInFlight
+                                    ? <Placeholder as={Card.Body} animation="wave">
+                                        <Placeholder xs={7}/> <Placeholder xs={4}/> <Placeholder xs={4}/>{' '}
+                                        <Placeholder xs={6}/>
+                                    </Placeholder>
+                                    : <Card.Body>
+                                        {this.state.currentAnswer.answer == null
+                                            ? <em className={"sample-text"}>Please perform a request</em>
+                                            : this.state.currentAnswer.answer
+                                        }
+                                    </Card.Body>
+                            }
                         </Card>
                     </Col>
                 </Row>
