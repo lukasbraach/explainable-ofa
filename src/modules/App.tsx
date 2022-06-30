@@ -2,13 +2,16 @@ import React from 'react';
 import plus from './plus.svg'
 import './App.css';
 import {Button, Card, Col, Container, Form, OverlayTrigger, Placeholder, Row, Tooltip} from "react-bootstrap";
+import Answer from "../models/answer";
 
 const baseURL = "https://inference-api.explainable-ofa.ml"
 
 const sampleImages = [
     {
         url: "https://robohash.org/sfgsdfg?size=500x500",
-        question: "What color is the robot?"
+        question: "What color are the robot's eyes?",
+        answer: null as Answer | null,
+        selectedExplanation: null as number | null,
     }
 ]
 
@@ -23,11 +26,6 @@ class App extends React.Component {
         imageOptions: [...sampleImages],
         isRequestInFlight: false,
         selectedImage: 0,
-        currentAnswer: {"answer": null}
-    }
-
-    componentDidMount = () => {
-        this.select(0)
     }
 
     select = (imageID: number) => {
@@ -65,15 +63,16 @@ class App extends React.Component {
 
     performRequest = () => {
         this.setState({
-            isRequestInFlight: true
+            isRequestInFlight: true,
         })
+        const selectedImage = this.state.selectedImage
 
-        fetch(this.state.imageOptions[this.state.selectedImage].url)
+        fetch(this.state.imageOptions[selectedImage].url)
             .then(res => res.blob()) // Gets the response and returns it as a blob
             .then(blob => {
                 const data = new FormData()
                 data.append('file', blob)
-                data.append('question', this.state.imageOptions[this.state.selectedImage].question)
+                data.append('question', this.state.imageOptions[selectedImage].question)
 
                 return fetch(baseURL + '/process_image', {
                     method: 'POST',
@@ -82,20 +81,75 @@ class App extends React.Component {
             })
             .then(res => res.json())
             .then(json => {
-                this.processAnswer(json)
-                this.setState({
-                    isRequestInFlight: false,
+                this.setState((state: any, props) => {
+                    let options = state.imageOptions
+                    options[selectedImage].answer = json as Answer
+
+                    return {
+                        imageOptions: options,
+                        isRequestInFlight: false,
+                    }
                 })
             })
     }
 
-    processAnswer = (answer: any) => {
-        this.setState({
-            currentAnswer: answer,
-        })
+    selectExplanation = (selectedImage: number, index: number | null) => {
+        this.setState(
+            (state: any, props) => {
+                state.imageOptions[selectedImage].selectedExplanation = index
+
+                return {
+                    imageOptions: state.imageOptions
+                }
+            }
+        )
+    }
+
+    renderResults = () => {
+        if (this.state.isRequestInFlight) {
+            return <Placeholder as={Card.Body} animation="wave">
+                <Placeholder xs={7}/> <Placeholder xs={4}/> <Placeholder xs={4}/>{' '}
+                <Placeholder xs={6}/>
+            </Placeholder>
+        }
+
+        let rendered = <em className={"sample-text"}>Please perform a request</em>
+        const currImageObject = this.state.imageOptions[this.state.selectedImage]
+
+        if (currImageObject.answer != null) {
+            const tokens = currImageObject.answer.answer.split(" ")
+            rendered = <>
+                {tokens.map(
+                    (value: string, index: number, array: string[]) => {
+                        return <>
+                            <Button
+                                variant="secondary" key={index}
+                                onClick={() => this.selectExplanation(this.state.selectedImage, index)}
+                            >
+                                {value}
+                            </Button>{' '}
+                        </>
+                    }
+                )}
+            </>
+        }
+
+        return <Card.Body>{rendered}</Card.Body>
     }
 
     render() {
+        const currImageObject = this.state.imageOptions[this.state.selectedImage]
+        let imageURL = currImageObject.url
+
+
+        if (currImageObject.selectedExplanation != null) {
+            const reqCode = currImageObject.answer?.request_code
+
+            imageURL = baseURL + "/response/decoder/"
+                + currImageObject.selectedExplanation + ".png?request_code=" + reqCode
+        }
+
+
         return (
             <Container id="main-container" fluid="sm">
                 <Row className={"mb-4"}>
@@ -147,8 +201,7 @@ class App extends React.Component {
                                     </Row>
                                 </Container>
                                 <Card id="image-preview" bg={"dark"} text={"white"}>
-                                    <Card.Img variant="top"
-                                              src={this.state.imageOptions[this.state.selectedImage].url}/>
+                                    <Card.Img variant="top" src={imageURL}/>
                                 </Card>
                             </Form.Group>
                             <Form.Group className="mb-3">
@@ -168,20 +221,17 @@ class App extends React.Component {
                     </Col>
                     <Col sm>
                         <h4>Result</h4>
+                        <Form.Label>
+                            Click on the highlighted output tokens to reveal the explanation.
+                            &nbsp;
+                            <a href={"#"}
+                               onClick={() => this.selectExplanation(this.state.selectedImage, null)}
+                            >
+                                Reset to original image
+                            </a>
+                        </Form.Label>
                         <Card bg={"dark"} text={"white"} id={"model-output"}>
-                            {
-                                this.state.isRequestInFlight
-                                    ? <Placeholder as={Card.Body} animation="wave">
-                                        <Placeholder xs={7}/> <Placeholder xs={4}/> <Placeholder xs={4}/>{' '}
-                                        <Placeholder xs={6}/>
-                                    </Placeholder>
-                                    : <Card.Body>
-                                        {this.state.currentAnswer.answer == null
-                                            ? <em className={"sample-text"}>Please perform a request</em>
-                                            : this.state.currentAnswer.answer
-                                        }
-                                    </Card.Body>
-                            }
+                            {this.renderResults()}
                         </Card>
                     </Col>
                 </Row>

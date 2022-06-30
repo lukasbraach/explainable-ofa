@@ -2,13 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a78997e7-b1c0-4e48-9658-8794af348353" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/models/answer.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/modules/App.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/modules/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/logo.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/plus.svg" beforeDir="false" afterPath="$PROJECT_DIR$/src/modules/plus.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/modules/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/modules/App.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,8 +14,16 @@
   <component name="ComposerSettings">
     <execution />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="TypeScript File" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="SIGN_OFF_COMMIT" value="true" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -78,7 +82,8 @@
       <workItem from="1656420937933" duration="144000" />
       <workItem from="1656421243217" duration="15869000" />
       <workItem from="1656446848257" duration="63000" />
-      <workItem from="1656446938199" duration="4287000" />
+      <workItem from="1656446938199" duration="4407000" />
+      <workItem from="1656586335712" duration="3324000" />
     </task>
     <task id="LOCAL-00001" summary="npx create react app">
       <created>1656421263436</created>
@@ -101,17 +106,27 @@
       <option name="project" value="LOCAL" />
       <updated>1656440783390</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="upd: frontend can make requests">
+      <created>1656485280806</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1656485280806</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="CHECK_NEW_TODO" value="false" />
     <MESSAGE value="npx create react app" />
     <MESSAGE value="image upload almost complete" />
     <MESSAGE value="upd: frontend almost done" />
-    <option name="LAST_COMMIT_MESSAGE" value="upd: frontend almost done" />
+    <MESSAGE value="upd: frontend can make requests" />
+    <option name="LAST_COMMIT_MESSAGE" value="upd: frontend can make requests" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
