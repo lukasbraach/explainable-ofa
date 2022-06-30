@@ -8,6 +8,12 @@ const baseURL = "https://inference-api.explainable-ofa.ml"
 
 const sampleImages = [
     {
+        url: "https://cdn.pixabay.com/photo/2022/02/25/04/11/traffic-7033509_1280.jpg",
+        question: "What is the object in the foreground?",
+        answer: null as Answer | null,
+        selectedExplanation: null as number | null,
+    },
+    {
         url: "https://robohash.org/sfgsdfg?size=500x500",
         question: "What color are the robot's eyes?",
         answer: null as Answer | null,
@@ -62,10 +68,16 @@ class App extends React.Component {
     }
 
     performRequest = () => {
-        this.setState({
-            isRequestInFlight: true,
-        })
         const selectedImage = this.state.selectedImage
+        this.setState((state: any, props) => {
+            let options = state.imageOptions
+            options[selectedImage].selectedExplanation = null
+
+            return {
+                imageOptions: options,
+                isRequestInFlight: true,
+            }
+        })
 
         fetch(this.state.imageOptions[selectedImage].url)
             .then(res => res.blob()) // Gets the response and returns it as a blob
@@ -121,14 +133,14 @@ class App extends React.Component {
             rendered = <>
                 {tokens.map(
                     (value: string, index: number, array: string[]) => {
-                        return <>
+                        return <span key={value + '' + index}>
                             <Button
-                                variant="secondary" key={index}
+                                variant="secondary"
                                 onClick={() => this.selectExplanation(this.state.selectedImage, index)}
                             >
                                 {value}
                             </Button>{' '}
-                        </>
+                        </span>
                     }
                 )}
             </>
