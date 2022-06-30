@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a78997e7-b1c0-4e48-9658-8794af348353" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/modules/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/modules/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/modules/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/modules/App.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,7 +82,7 @@
       <workItem from="1656446848257" duration="63000" />
       <workItem from="1656446938199" duration="4407000" />
       <workItem from="1656586335712" duration="5122000" />
-      <workItem from="1656599039452" duration="617000" />
+      <workItem from="1656599039452" duration="730000" />
     </task>
     <task id="LOCAL-00001" summary="npx create react app">
       <created>1656421263436</created>
@@ -120,7 +119,14 @@
       <option name="project" value="LOCAL" />
       <updated>1656590106023</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="upd: frontend seems to work well">
+      <created>1656599754586</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1656599754586</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -134,7 +140,8 @@
     <MESSAGE value="upd: frontend almost done" />
     <MESSAGE value="upd: frontend can make requests" />
     <MESSAGE value="upd: Visualizing explanations works" />
-    <option name="LAST_COMMIT_MESSAGE" value="upd: Visualizing explanations works" />
+    <MESSAGE value="upd: frontend seems to work well" />
+    <option name="LAST_COMMIT_MESSAGE" value="upd: frontend seems to work well" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
