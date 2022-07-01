@@ -8,17 +8,23 @@ const baseURL = "https://inference-api.explainable-ofa.ml"
 
 const sampleImages = [
     {
-        url: "https://cdn.pixabay.com/photo/2022/02/25/04/11/traffic-7033509_1280.jpg",
-        question: "What is the object in the foreground?",
+        url: "/images/traffic.jpg",
+        question: "How many cars are in the picture?",
         answer: null as Answer | null,
         selectedExplanation: null as number | null,
     },
     {
-        url: "https://robohash.org/sfgsdfg?size=500x500",
+        url: "/images/basil.jpg",
+        question: "Describe the image",
+        answer: null as Answer | null,
+        selectedExplanation: null as number | null,
+    },
+    {
+        url: "/images/robot.png",
         question: "What color are the robot's eyes?",
         answer: null as Answer | null,
         selectedExplanation: null as number | null,
-    }
+    },
 ]
 
 const addYourOwnTooltip = (props: any) => (
@@ -32,6 +38,7 @@ class App extends React.Component {
         imageOptions: [...sampleImages],
         isRequestInFlight: false,
         selectedImage: 0,
+        errorStr: null as string | null,
     }
 
     select = (imageID: number) => {
@@ -100,7 +107,14 @@ class App extends React.Component {
                     return {
                         imageOptions: options,
                         isRequestInFlight: false,
+                        errorStr: null,
                     }
+                })
+            })
+            .catch(reason => {
+                this.setState({
+                    isRequestInFlight: false,
+                    errorStr: "Inference request failed. Sorry!",
                 })
             })
     }
@@ -125,10 +139,13 @@ class App extends React.Component {
             </Placeholder>
         }
 
+
         let rendered = <em className={"sample-text"}>Please perform a request</em>
         const currImageObject = this.state.imageOptions[this.state.selectedImage]
 
-        if (currImageObject.answer != null) {
+        if (this.state.errorStr != null) {
+            rendered = <em className={"sample-text"}>{this.state.errorStr}</em>
+        } else if (currImageObject.answer != null) {
             const tokens = currImageObject.answer.answer.split(" ")
             rendered = <>
                 {tokens.map(
@@ -158,7 +175,7 @@ class App extends React.Component {
             const reqCode = currImageObject.answer?.request_code
 
             imageURL = baseURL + "/response/decoder/"
-                + currImageObject.selectedExplanation + ".png?request_code=" + reqCode
+                + currImageObject.selectedExplanation + ".jpg?request_code=" + reqCode
         }
 
 
@@ -225,7 +242,8 @@ class App extends React.Component {
                                               value={this.state.imageOptions[this.state.selectedImage].question}
                                               onChange={this.updateText}/>
                             </Form.Group>
-                            <Button variant="primary" disabled={this.state.isRequestInFlight}
+                            <Button variant="primary"
+                                    disabled={this.state.isRequestInFlight || currImageObject.question === ""}
                                     onClick={this.performRequest}>
                                 Process
                             </Button>
