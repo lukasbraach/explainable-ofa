@@ -4,6 +4,8 @@ import './App.css';
 import {Button, Card, Col, Container, Form, OverlayTrigger, Placeholder, Row, Tooltip} from "react-bootstrap";
 import Answer from "../models/answer";
 
+const reducer = require('image-blob-reduce')();
+
 const baseURL = "https://inference-api.explainable-ofa.ml"
 
 const sampleImages = [
@@ -26,6 +28,8 @@ const sampleImages = [
         selectedExplanation: null as number | null,
     },
 ]
+
+const maxImageSize = 384
 
 const addYourOwnTooltip = (props: any) => (
     <Tooltip {...props}>
@@ -88,7 +92,10 @@ class App extends React.Component {
 
         fetch(this.state.imageOptions[selectedImage].url)
             .then(res => res.blob()) // Gets the response and returns it as a blob
-            .then(blob => {
+            .then((blob: Blob) => {
+                return reducer.toBlob(blob, {max: maxImageSize})
+            })
+            .then((blob) => {
                 const data = new FormData()
                 data.append('file', blob)
                 data.append('question', this.state.imageOptions[selectedImage].question)
