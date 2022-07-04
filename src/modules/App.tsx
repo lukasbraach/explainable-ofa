@@ -3,8 +3,10 @@ import plus from './plus.svg'
 import './App.css';
 import {Button, Card, Col, Container, Form, OverlayTrigger, Placeholder, Row, Tooltip} from "react-bootstrap";
 import Answer from "../models/answer";
+import ReactMarkdown from 'react-markdown'
 
-const baseURL = "https://inference-api.explainable-ofa.ml"
+
+const baseURL = "http://0.0.0.0:8000"
 
 const sampleImages = [
     {
@@ -39,6 +41,7 @@ class App extends React.Component {
         isRequestInFlight: false,
         selectedImage: 0,
         errorStr: null as string | null,
+        readme: "test"
     }
 
     select = (imageID: number) => {
@@ -129,6 +132,16 @@ class App extends React.Component {
                 }
             }
         )
+    }
+
+    componentDidMount() {
+        fetch('https://raw.githubusercontent.com/bjoernpl/OFA_Explain/main/ExplainReadme.md')
+            .then((response) => response.text())
+            .then((response) => {
+                this.setState({
+                    readme: response
+                })
+            })
     }
 
     renderResults = () => {
@@ -264,6 +277,11 @@ class App extends React.Component {
                             {this.renderResults()}
                         </Card>
                     </Col>
+                </Row>
+                <Row>
+                    <ReactMarkdown>
+                        {this.state.readme}
+                    </ReactMarkdown>
                 </Row>
             </Container>
         );
