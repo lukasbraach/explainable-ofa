@@ -6,7 +6,7 @@ import Answer from "../models/answer";
 import ReactMarkdown from 'react-markdown'
 
 
-const baseURL = "http://0.0.0.0:8000"
+const baseURL = "https://inference-api.explainable-ofa.ml"
 
 const sampleImages = [
     {
