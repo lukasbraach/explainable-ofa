@@ -253,7 +253,7 @@ class App extends React.Component {
                                     <Card.Img variant="top" src={imageURL}/>
                                 </Card>
                             </Form.Group>
-                            <Form.Group className="mb-3">
+                            <Form.Group className="mb-4">
                                 <Form.Label>
                                     Type your task
                                 </Form.Label>
@@ -269,10 +269,10 @@ class App extends React.Component {
                             </Button>
                         </Form>
                     </Col>
-                    <Col sm>
+                    <Col sm className={"mb-4"}>
                         <h4>Result</h4>
                         <Form.Label>
-                            Click on the highlighted output tokens to reveal the explanation.
+                            <strong>Click</strong> on the highlighted <strong>output tokens</strong> to reveal the explanation.
                             &nbsp;
                             <a href={"#"}
                                onClick={() => this.selectExplanation(this.state.selectedImage, null)}
