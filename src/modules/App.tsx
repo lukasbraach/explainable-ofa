@@ -83,7 +83,8 @@ class App extends React.Component {
 
         this.setState(
             (state: any, props) => ({
-                imageOptions: [...state.imageOptions, ...urls]
+                imageOptions: [...state.imageOptions, ...urls],
+                selectedImage: state.imageOptions.length
             })
         )
     }
