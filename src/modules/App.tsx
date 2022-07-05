@@ -40,9 +40,10 @@ class App extends React.Component {
         imageOptions: [...sampleImages],
         isRequestInFlight: false,
         selectedImage: 0,
-        errorStr: null as string | null,
-        readme: "test"
+        errorStr: null as string | null
     }
+
+    readme = ""
 
     select = (imageID: number) => {
         this.setState({
@@ -78,6 +79,11 @@ class App extends React.Component {
     }
 
     performRequest = () => {
+        // // Navigate to image-preview
+        // if (window.innerWidth < 800) {
+        //     window.history.pushState({}, "","#image-preview")
+        // }
+
         const selectedImage = this.state.selectedImage
         this.setState((state: any, props) => {
             let options = state.imageOptions
@@ -138,9 +144,8 @@ class App extends React.Component {
         fetch('https://raw.githubusercontent.com/bjoernpl/OFA_Explain/main/ExplainReadme.md')
             .then((response) => response.text())
             .then((response) => {
-                this.setState({
-                    readme: response
-                })
+                this.readme = response
+                this.setState({})
             })
     }
 
@@ -280,7 +285,7 @@ class App extends React.Component {
                 </Row>
                 <Row>
                     <ReactMarkdown>
-                        {this.state.readme}
+                        {this.readme}
                     </ReactMarkdown>
                 </Row>
             </Container>
