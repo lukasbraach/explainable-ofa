@@ -24,6 +24,12 @@ const sampleImages = [
         selectedExplanation: null as number | null,
     },
     {
+        url: "/images/horse_small.jpg",
+        question: "What animal is this?",
+        answer: null as Answer | null,
+        selectedExplanation: null as number | null,
+    },
+    {
         url: "/images/robot.png",
         question: "What color are the robot's eyes?",
         answer: null as Answer | null,
