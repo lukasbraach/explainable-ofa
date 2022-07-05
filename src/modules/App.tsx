@@ -6,6 +6,8 @@ import Answer from "../models/answer";
 import ReactMarkdown from 'react-markdown'
 
 
+const reducer = require('image-blob-reduce')();
+
 const baseURL = "https://inference-api.explainable-ofa.ml"
 
 const sampleImages = [
@@ -28,6 +30,8 @@ const sampleImages = [
         selectedExplanation: null as number | null,
     },
 ]
+
+const maxImageSize = 384
 
 const addYourOwnTooltip = (props: any) => (
     <Tooltip {...props}>
@@ -97,7 +101,10 @@ class App extends React.Component {
 
         fetch(this.state.imageOptions[selectedImage].url)
             .then(res => res.blob()) // Gets the response and returns it as a blob
-            .then(blob => {
+            .then((blob: Blob) => {
+                return reducer.toBlob(blob, {max: maxImageSize})
+            })
+            .then((blob) => {
                 const data = new FormData()
                 data.append('file', blob)
                 data.append('question', this.state.imageOptions[selectedImage].question)
@@ -251,7 +258,7 @@ class App extends React.Component {
                                     <Card.Img variant="top" src={imageURL}/>
                                 </Card>
                             </Form.Group>
-                            <Form.Group className="mb-3">
+                            <Form.Group className="mb-4">
                                 <Form.Label>
                                     Type your task
                                 </Form.Label>
@@ -267,10 +274,10 @@ class App extends React.Component {
                             </Button>
                         </Form>
                     </Col>
-                    <Col sm>
+                    <Col sm className={"mb-4"}>
                         <h4>Result</h4>
                         <Form.Label>
-                            Click on the highlighted output tokens to reveal the explanation.
+                            <strong>Click</strong> on the highlighted <strong>output tokens</strong> to reveal the explanation.
                             &nbsp;
                             <a href={"#"}
                                onClick={() => this.selectExplanation(this.state.selectedImage, null)}
