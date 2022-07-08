@@ -9,7 +9,7 @@ import ReactMarkdown from 'react-markdown'
 
 const reducer = require('image-blob-reduce')();
 
-const baseURL = "http://0.0.0.0:8000"
+const baseURL = "https://inference-api.explainable-ofa.ml"
 
 const sampleImages = [
     {
