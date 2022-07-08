@@ -202,17 +202,16 @@ class App extends React.Component {
         if (this.state.errorStr != null) {
             rendered = <em className={"sample-text"}>{this.state.errorStr}</em>
         } else if (currImageObject.answer != null) {
-            const inputTokens = currImageObject.question.replace("?", " ?").split(" ")
+            const decoderIndices = currImageObject.answer.decoder_indices
             const tokens = currImageObject.answer.answer.split(" ")
-            const values = currImageObject.answer.txt_attns
             rendered = <>
                 {tokens.map(
                     (value: string, index: number, array: string[]) => {
-                        return <span key={value + '' + (index+inputTokens.length)}>
+                        return <span key={value + '' + decoderIndices[index]}>
                             <Button
-                                style={{backgroundColor: this.setColor(index+inputTokens.length)}}
+                                style={{backgroundColor: this.setColor(decoderIndices[index])}}
                                 variant="secondary"
-                                onClick={() => this.selectExplanation(this.state.selectedImage, (index+inputTokens.length))}
+                                onClick={() => this.selectExplanation(this.state.selectedImage, decoderIndices[index])}
                             >
                                 {value}
                             </Button>{' '}
