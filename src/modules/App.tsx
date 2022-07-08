@@ -6,9 +6,10 @@ import Answer from "../models/answer";
 import ReactMarkdown from 'react-markdown'
 
 
+
 const reducer = require('image-blob-reduce')();
 
-const baseURL = "https://inference-api.explainable-ofa.ml"
+const baseURL = "http://0.0.0.0:8000"
 
 const sampleImages = [
     {
@@ -16,28 +17,38 @@ const sampleImages = [
         question: "How many cars are in the picture?",
         answer: null as Answer | null,
         selectedExplanation: null as number | null,
+        responseQuestion: null as string | null
     },
     {
         url: "/images/basil.jpg",
         question: "Describe the image",
         answer: null as Answer | null,
         selectedExplanation: null as number | null,
+        responseQuestion: null as string | null
     },
     {
         url: "/images/horse_small.jpg",
-        question: "What animal is this?",
+        question: "Does the horse have ears?",
         answer: null as Answer | null,
         selectedExplanation: null as number | null,
+        responseQuestion: null as string | null
     },
     {
         url: "/images/robot.png",
         question: "What color are the robot's eyes?",
         answer: null as Answer | null,
         selectedExplanation: null as number | null,
+        responseQuestion: null as string | null
     },
 ]
 
 const maxImageSize = 384
+
+function valueToRGB(value: number): string {
+    const colorValue = value*150
+    return `rgb(255, ${150-colorValue},  30)`
+}
+
 
 const addYourOwnTooltip = (props: any) => (
     <Tooltip {...props}>
@@ -50,7 +61,8 @@ class App extends React.Component {
         imageOptions: [...sampleImages],
         isRequestInFlight: false,
         selectedImage: 0,
-        errorStr: null as string | null
+        errorStr: null as string | null,
+        selectedTokenIndex: null as number | null
     }
 
     readme = ""
@@ -59,6 +71,16 @@ class App extends React.Component {
         this.setState({
             selectedImage: imageID,
         })
+    }
+
+    setColor = (index: number) : string =>{
+        const selectedImage = this.state.imageOptions[this.state.selectedImage]
+        const answer = selectedImage.answer
+        const selectedToken = selectedImage.selectedExplanation
+        if (selectedToken != null && answer != null){
+            return valueToRGB(answer.txt_attns[selectedToken][index])
+        }
+        return "rgb(100,100,100)"
     }
 
     updateText = (event: any) => {
@@ -99,6 +121,7 @@ class App extends React.Component {
         this.setState((state: any, props) => {
             let options = state.imageOptions
             options[selectedImage].selectedExplanation = null
+            options[selectedImage].responseQuestion = null
 
             return {
                 imageOptions: options,
@@ -126,6 +149,7 @@ class App extends React.Component {
                 this.setState((state: any, props) => {
                     let options = state.imageOptions
                     options[selectedImage].answer = json as Answer
+                    options[selectedImage].responseQuestion = options[selectedImage].question
 
                     return {
                         imageOptions: options,
@@ -178,12 +202,51 @@ class App extends React.Component {
         if (this.state.errorStr != null) {
             rendered = <em className={"sample-text"}>{this.state.errorStr}</em>
         } else if (currImageObject.answer != null) {
+            const inputTokens = currImageObject.question.replace("?", " ?").split(" ")
             const tokens = currImageObject.answer.answer.split(" ")
+            const values = currImageObject.answer.txt_attns
+            rendered = <>
+                {tokens.map(
+                    (value: string, index: number, array: string[]) => {
+                        return <span key={value + '' + (index+inputTokens.length)}>
+                            <Button
+                                style={{backgroundColor: this.setColor(index+inputTokens.length)}}
+                                variant="secondary"
+                                onClick={() => this.selectExplanation(this.state.selectedImage, (index+inputTokens.length))}
+                            >
+                                {value}
+                            </Button>{' '}
+                        </span>
+                    }
+                )}
+            </>
+        }
+
+        return <Card.Body><div><p>Answer tokens:</p>{rendered}</div></Card.Body>
+    }
+
+    renderInputResults = () => {
+        if (this.state.isRequestInFlight) {
+            return <Placeholder as={Card.Body} animation="wave">
+                <Placeholder xs={7}/> <Placeholder xs={4}/> <Placeholder xs={4}/>{' '}
+                <Placeholder xs={6}/>
+            </Placeholder>
+        }
+
+
+        let rendered = <em className={"sample-text"}>-</em>
+        const currImageObject = this.state.imageOptions[this.state.selectedImage]
+
+        if (this.state.errorStr != null) {
+            rendered = <em className={"sample-text"}>{this.state.errorStr}</em>
+        } else if (currImageObject.responseQuestion != null) {
+            const tokens = currImageObject.responseQuestion.replace("?", " ?").split(" ")
             rendered = <>
                 {tokens.map(
                     (value: string, index: number, array: string[]) => {
                         return <span key={value + '' + index}>
                             <Button
+                                style={{backgroundColor: this.setColor(index)}}
                                 variant="secondary"
                                 onClick={() => this.selectExplanation(this.state.selectedImage, index)}
                             >
@@ -195,7 +258,7 @@ class App extends React.Component {
             </>
         }
 
-        return <Card.Body>{rendered}</Card.Body>
+        return <Card.Body><div><p>Input question tokens:</p>{rendered}</div></Card.Body>
     }
 
     render() {
@@ -206,7 +269,7 @@ class App extends React.Component {
         if (currImageObject.selectedExplanation != null) {
             const reqCode = currImageObject.answer?.request_code
 
-            imageURL = baseURL + "/response/decoder/"
+            imageURL = baseURL + "/response/"
                 + currImageObject.selectedExplanation + ".jpg?request_code=" + reqCode
         }
 
@@ -292,6 +355,9 @@ class App extends React.Component {
                                 Reset to original image
                             </a>
                         </Form.Label>
+                        <Card bg={"dark"} text={"white"} id={"model-output"}>
+                            {this.renderInputResults()}
+                        </Card>
                         <Card bg={"dark"} text={"white"} id={"model-output"}>
                             {this.renderResults()}
                         </Card>

@@ -3,6 +3,7 @@ class Answer {
         public answer: string,
         public decoder_indices: number[],
         public encoder_indices: number[],
+        public txt_attns: number[][],
         public request_code: string,
     ) {
     }

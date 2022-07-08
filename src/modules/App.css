@@ -8,6 +8,10 @@
     margin-bottom: 20px;
 }
 
+#model-output p {
+    font-size: 0.6em;
+}
+
 #main-input {
     border: 1px solid rgba(0, 0, 0, .25);
     color: rgba(255, 255, 255, 0.8);
